@@ -27,9 +27,7 @@ if price_element:
 else:
     print("❌ قیمت پیدا نشد")
 
-!pip install python-telegram-bot requests beautifulsoup4
 
-TOKEN = "7702743601:AAEZ1pbvamYx7A-omTRNicK5fs3c_YFl7QI"
 
 import nest_asyncio
 import asyncio
