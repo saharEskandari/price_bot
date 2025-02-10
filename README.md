@@ -8,9 +8,6 @@ This project is built using **`python-telegram-bot`** for interacting with Teleg
 
 The bot is deployed on **Render**, and **`nest_asyncio`** is used for managing the event loop.
 
-## Bot URL
-You can find the bot on Telegram with the following username:
-[@dollar_toman_bot](https://t.me/dollar_toman_bot)
 
 ## Setup Instructions
 
