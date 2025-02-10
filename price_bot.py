@@ -7,6 +7,7 @@ Original file is located at
     https://colab.research.google.com/drive/1Kc3S-Q3m7Ps3gJcfAsk1-8qp4jlL6g0-
 """
 
+TOKEN = "7702743601:AAEZ1pbvamYx7A-omTRNicK5fs3c_YFl7QI"
 import requests
 from bs4 import BeautifulSoup
 
