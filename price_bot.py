@@ -20,7 +20,6 @@ headers = {
 response = requests.get(url, headers=headers)
 soup = BeautifulSoup(response.text, "html.parser")
 
-# پیدا کردن نرخ فعلی دلار
 price_element = soup.find("td", class_="text-left")
 if price_element:
     price = price_element.text.strip()
