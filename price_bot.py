@@ -28,7 +28,6 @@ else:
     print("❌ قیمت پیدا نشد")
 
 
-
 import nest_asyncio
 import asyncio
 import requests
@@ -36,7 +35,8 @@ from bs4 import BeautifulSoup
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
 
-nest_asyncio.apply()
+nest_asyncio.apply()  
+
 
 async def get_dollar_price():
     url = "https://www.tgju.org/profile/price_dollar_rl"
@@ -47,7 +47,7 @@ async def get_dollar_price():
     price_element = soup.find("td", class_="text-left")
     return price_element.text.strip() if price_element else "❌ قیمت پیدا نشد"
 
-
+# دستور `/start`
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("سلام! برای دریافت قیمت دلار از دستور /price استفاده کنید.")
 
@@ -62,6 +62,7 @@ async def main():
 
     print("🤖 Bot is running...")
     await app.run_polling()
+
 if __name__ == "__main__":
     try:
         asyncio.get_event_loop().run_until_complete(main())
@@ -69,4 +70,3 @@ if __name__ == "__main__":
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         loop.run_until_complete(main())
-
