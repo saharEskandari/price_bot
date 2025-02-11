@@ -28,15 +28,14 @@ else:
     print("❌ قیمت پیدا نشد")
 
 
+import requests
 import nest_asyncio
 import asyncio
-import requests
 from bs4 import BeautifulSoup
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
 
-nest_asyncio.apply()  
-
+nest_asyncio.apply()
 
 async def get_dollar_price():
     url = "https://www.tgju.org/profile/price_dollar_rl"
@@ -47,26 +46,37 @@ async def get_dollar_price():
     price_element = soup.find("td", class_="text-left")
     return price_element.text.strip() if price_element else "❌ قیمت پیدا نشد"
 
-# دستور `/start`
+# `/start`
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("سلام! برای دریافت قیمت دلار از دستور /price استفاده کنید.")
 
+# `/price`
 async def price(update: Update, context: CallbackContext) -> None:
     price = await get_dollar_price()
     await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} ریال")
+
+async def keep_alive():
+    """ این تابع برای جلوگیری از خاموش شدن سرور هر ۵ دقیقه یکبار به خودش درخواست می‌دهد """
+    while True:
+        try:
+            requests.get("https://price-bot-0ilg.onrender.com")  
+            print("✅ Self-Ping Sent Successfully")
+        except Exception as e:
+            print(f"❌ Self-Ping Failed: {e}")
+        await asyncio.sleep(200)  
 
 async def main():
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("price", price))
 
+    
+    loop = asyncio.get_event_loop()
+    loop.create_task(keep_alive())
+
     print("🤖 Bot is running...")
     await app.run_polling()
 
 if __name__ == "__main__":
-    try:
-        asyncio.get_event_loop().run_until_complete(main())
-    except RuntimeError:
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        loop.run_until_complete(main())
+    asyncio.run(main())
+
