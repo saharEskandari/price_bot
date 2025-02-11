@@ -34,7 +34,7 @@ import requests
 from bs4 import BeautifulSoup
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
-from keep_alive import keep_alive  # ایمپورت سرور Flask
+from keep_alive import keep_alive 
 
 nest_asyncio.apply()
 
@@ -55,7 +55,7 @@ async def price(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} تومان")
 
 async def main():
-    keep_alive()  # اجرای سرور Flask برای جلوگیری از خاموش شدن
+    keep_alive() 
     
     app = Application.builder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start))
