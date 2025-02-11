@@ -28,27 +28,22 @@ else:
     print("❌ قیمت پیدا نشد")
 
 
-import requests
+import nest_asyncio
 import asyncio
-from flask import Flask
+import requests
 from bs4 import BeautifulSoup
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
+from keep_alive import keep_alive  # ایمپورت سرور Flask
 
-
-# سرور Flask برای جلوگیری از خوابیدن Render
-app = Flask(__name__)
-
-@app.route('/')
-def home():
-    return "Bot is running!"
+nest_asyncio.apply()
 
 async def get_dollar_price():
     url = "https://www.tgju.org/profile/price_dollar_rl"
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
     soup = BeautifulSoup(response.text, "html.parser")
-
+    
     price_element = soup.find("td", class_="text-left")
     return price_element.text.strip() if price_element else "❌ قیمت پیدا نشد"
 
@@ -57,22 +52,17 @@ async def start(update: Update, context: CallbackContext) -> None:
 
 async def price(update: Update, context: CallbackContext) -> None:
     price = await get_dollar_price()
-    await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} ریال")
+    await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} تومان")
 
 async def main():
-    app_telegram = Application.builder().token(TOKEN).build()
-    app_telegram.add_handler(CommandHandler("start", start))
-    app_telegram.add_handler(CommandHandler("price", price))
-
-    loop = asyncio.get_event_loop()
-    loop.create_task(keep_alive())  # فعال نگه داشتن سرور
+    keep_alive()  # اجرای سرور Flask برای جلوگیری از خاموش شدن
+    
+    app = Application.builder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("price", price))
+    
     print("🤖 Bot is running...")
+    await app.run_polling()
 
-    await app_telegram.run_polling()
-
-# اجرای سرور Flask
 if __name__ == "__main__":
-    from threading import Thread
-    Thread(target=lambda: app.run(host="0.0.0.0", port=5000)).start()
     asyncio.run(main())
-
