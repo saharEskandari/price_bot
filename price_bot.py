@@ -56,10 +56,10 @@ async def price(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} ریال")
 
 async def keep_alive():
-    """ این تابع برای جلوگیری از خاموش شدن سرور هر ۵ دقیقه یکبار به خودش درخواست می‌دهد """
+
     while True:
         try:
-            requests.get("https://price-bot-0ilg.onrender.com")  
+            requests.get(https://price-bot-0ilg.onrender.com)  
             print("✅ Self-Ping Sent Successfully")
         except Exception as e:
             print(f"❌ Self-Ping Failed: {e}")
