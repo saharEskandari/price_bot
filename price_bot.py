@@ -29,13 +29,19 @@ else:
 
 
 import requests
-import nest_asyncio
 import asyncio
+from flask import Flask
 from bs4 import BeautifulSoup
 from telegram import Update
 from telegram.ext import Application, CommandHandler, CallbackContext
 
-nest_asyncio.apply()
+
+# سرور Flask برای جلوگیری از خوابیدن Render
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Bot is running!"
 
 async def get_dollar_price():
     url = "https://www.tgju.org/profile/price_dollar_rl"
@@ -46,37 +52,27 @@ async def get_dollar_price():
     price_element = soup.find("td", class_="text-left")
     return price_element.text.strip() if price_element else "❌ قیمت پیدا نشد"
 
-# `/start`
 async def start(update: Update, context: CallbackContext) -> None:
     await update.message.reply_text("سلام! برای دریافت قیمت دلار از دستور /price استفاده کنید.")
 
-# `/price`
 async def price(update: Update, context: CallbackContext) -> None:
     price = await get_dollar_price()
     await update.message.reply_text(f"💵 قیمت لحظه‌ای دلار: {price} ریال")
 
-async def keep_alive():
-
-    while True:
-        try:
-            requests.get("https://price-bot-0ilg.onrender.com")  
-            print("✅ Self-Ping Sent Successfully")
-        except Exception as e:
-            print(f"❌ Self-Ping Failed: {e}")
-        await asyncio.sleep(200)  
-
 async def main():
-    app = Application.builder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("price", price))
+    app_telegram = Application.builder().token(TOKEN).build()
+    app_telegram.add_handler(CommandHandler("start", start))
+    app_telegram.add_handler(CommandHandler("price", price))
 
-    
     loop = asyncio.get_event_loop()
-    loop.create_task(keep_alive())
-
+    loop.create_task(keep_alive())  # فعال نگه داشتن سرور
     print("🤖 Bot is running...")
-    await app.run_polling()
 
+    await app_telegram.run_polling()
+
+# اجرای سرور Flask
 if __name__ == "__main__":
+    from threading import Thread
+    Thread(target=lambda: app.run(host="0.0.0.0", port=5000)).start()
     asyncio.run(main())
 
