@@ -59,7 +59,7 @@ async def keep_alive():
 
     while True:
         try:
-            requests.get(https://price-bot-0ilg.onrender.com)  
+            requests.get("https://price-bot-0ilg.onrender.com")  
             print("✅ Self-Ping Sent Successfully")
         except Exception as e:
             print(f"❌ Self-Ping Failed: {e}")
